@@ -29,7 +29,7 @@ async def get_current_user(db: AsyncSession = Depends(get_session), token: str =
         detail="Não foi possível autenticar a credenticial",
         headers={"WWW-Authenticate": "Bearer"}
     )
-    
+
     try:  # Decodificando o token
         payload = jwt.decode(
             token,
@@ -38,18 +38,18 @@ async def get_current_user(db: AsyncSession = Depends(get_session), token: str =
             options={"verify_aud": False}
         )
         username: str = payload.get("sub") # Obtendo o ID do usuário desse token decodificado
-        
+
         if username is None:
             raise credential_exception
-        
-        token_data: TokenData = TokenData(username=username) #
+
+        token_data: TokenData = TokenData(username=username)
     except JWTError:
         raise credential_exception
-    
+
     # Buscando informações do usuário que tem esse token
     usuario: Usuario = (await db.execute(select(Usuario).where(Usuario.id == int(token_data.username)))).scalars().unique().one_or_none()
-    
+
     if usuario is None:
         raise credential_exception
-    
+
     return usuario
