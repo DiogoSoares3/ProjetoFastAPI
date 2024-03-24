@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     DBBaseModel: ClassVar = declarative_base()
     
     load_dotenv()
-    secret_key = os.getenv("SECRET_KEY")
+    secret_key: ClassVar[str] = os.getenv("SECRET_KEY")
     
     JWT_SECRET: str = secret_key  # Quando trabalhamos com tokens, o padrão é o JSON Web Token (JWT)
     

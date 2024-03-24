@@ -8,7 +8,6 @@ class ArtigoSchema(BaseModel):
     url_fonte: HttpUrl
     descricao: str
     usuario_id: int
-    #criador: Usuario
 
     class Config:
         from_attributes = True
