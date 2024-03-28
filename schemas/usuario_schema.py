@@ -25,8 +25,8 @@ class UsuarioSchemaArtigos(UsuarioSchemaBase):
     # Só se especificar que quer os artigos de um usuario
     
 
-class UsuarioChemaUp(UsuarioSchemaBase): # Schema para update de usuários
-    nome: Optional[str]
+class UsuarioSchemaUp(UsuarioSchemaBase): # Schema para update de usuários
+    id: Optional[int]
     nome: Optional[str]
     sobrenome: Optional[str]
     email: Optional[EmailStr]

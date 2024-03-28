@@ -5,13 +5,13 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import jwt
-from models.usuarios_model import Usuario
+from models.usuario_model import Usuario
 from core.configs import settings
 from core.security import verificar_senha
 from pydantic import EmailStr
 
 
-oauth2_schema = OAuth2PasswordBearer(
+oauth2_schema = OAuth2PasswordBearer(  # Obtém o token do usuário através do seu login
     tokenUrl=f"{settings.API_V1_STR}/usuarios/login"
 )
 
