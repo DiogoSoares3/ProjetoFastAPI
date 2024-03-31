@@ -7,9 +7,9 @@ class Usuario(settings.DBBaseModel):
     __tablename__ = 'usuarios'
     
     id: int = Column(Integer, primary_key=True, autoincrement=True)
-    nome: str = Column(String(256), nullable=True)
-    sobrenome: str = Column(String(256), nullable=True)
-    email: str = Column(String(256), nullable=False, unique=True)
+    nome: str = Column(String(256), nullable=False)
+    sobrenome: str = Column(String(256), nullable=False)
+    email: str = Column(String(256), nullable=False, unique=True, index=True)
     senha: str = Column(String(256), nullable=False)
     eh_admin = Column(Boolean, default=False)
     artigos = relationship(

@@ -38,7 +38,7 @@ def _criar_token(tipo_token: str, tempo_vida: timedelta, sub: str) -> str:
     payload["type"] = tipo_token
     payload["exp"] = expire
     payload["iat"] = datetime.now(tz=timezone_)  # Gerado em...
-    payload["sub"] = sub
+    payload["sub"] = str(sub)
     
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.ALGORITHM)
 

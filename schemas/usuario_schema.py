@@ -7,7 +7,7 @@ class UsuarioSchemaBase(BaseModel):
     nome: str
     sobrenome: str
     email: EmailStr
-    eh_admin: bool
+    eh_admin: bool = False
 
     class Config:
         from_attributes = True
@@ -17,17 +17,17 @@ class UsuarioSchemaBase(BaseModel):
 class UsuarioSchemaCreate(UsuarioSchemaBase):
     senha: str
     # Senha é só de acesso interno, ele não deve ser exposto, por isso devemos ter um schema separado
-    
+
 
 class UsuarioSchemaArtigos(UsuarioSchemaBase):
     artigos: Optional[List[ArtigoSchema]]
     # O retorno default de usuarios não precisa ter a lista de artigos
     # Só se especificar que quer os artigos de um usuario
-    
+
 
 class UsuarioSchemaUp(UsuarioSchemaBase): # Schema para update de usuários
-    id: Optional[int]
-    nome: Optional[str]
-    sobrenome: Optional[str]
-    email: Optional[EmailStr]
-    eh_admin: Optional[bool]
+    nome: Optional[str] = None
+    sobrenome: Optional[str] = None
+    email: Optional[EmailStr] = None
+    senha: Optional[str] = None
+    eh_admin: Optional[bool] = None

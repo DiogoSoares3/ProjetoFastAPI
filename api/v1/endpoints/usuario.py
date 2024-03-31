@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 from models.usuario_model import Usuario
 from schemas.usuario_schema import *
 from core.deps import get_session, get_current_user
@@ -27,10 +28,14 @@ async def post_usuario(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(
                                     email=usuario.email, senha=gerar_hash_senha(usuario.senha),
                                     eh_admin=usuario.eh_admin)
     
-    db.add(novo_usuario)
-    await db.commit()
-    
-    return novo_usuario
+    try:
+        db.add(novo_usuario)
+        await db.commit()
+        
+        return novo_usuario
+    except IntegrityError:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Esse email já é utilizado na plataforma")
+        
 
 
 # GET usuarios
@@ -57,16 +62,20 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
 async def get_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
     usuario_up: Usuario = (await db.execute(select(Usuario).where(Usuario.id == usuario_id))).scalars().unique().one_or_none()
     
-    if usuario_up:
+    if usuario_up: # Nesse codigo, por escolha, podemos atualizar o todos os atributos
         if usuario.nome:
             usuario_up.nome = usuario.nome
         if usuario.sobrenome:
             usuario_up.sobrenome = usuario.sobrenome
         if usuario.email:
             usuario_up.email = usuario.email
-        
+        if usuario.senha:
+            usuario_up.senha = usuario.senha
+        if usuario.eh_admin:
+            usuario_up.eh_admin = usuario.eh_admin
+
         await db.commit()
-        return usuario
+        return usuario_up
     else:
         return HTTPException(detail='Usuário não encontrado', status_code=status.HTTP_404_NOT_FOUND)
 
@@ -75,7 +84,7 @@ async def get_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
 @router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
     usuario_del: Usuario = (await db.execute(select(Usuario).where(Usuario.id == usuario_id))).scalars().unique().one_or_none()
-    
+
     if usuario_del:
         await db.delete(usuario_del)
         await db.commit()
