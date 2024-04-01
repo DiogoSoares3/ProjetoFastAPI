@@ -94,14 +94,13 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
 
 
 # POST Login
-@router.post('/login', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
+@router.post('/login', status_code=status.HTTP_200_OK)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
     usuario = await autenticar(email=form_data.username, senha=form_data.password, db=db)
-    
+
     if not usuario:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email ou senha incorreto")
-    
+
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id),
                                  "token_type": "bearer"
                                  }, status_code=status.HTTP_200_OK)
-    
